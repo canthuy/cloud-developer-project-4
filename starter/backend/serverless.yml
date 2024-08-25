@@ -1,3 +1,5 @@
+org: canthuy
+app: serverless-todo-app
 service: serverless-todo-app
 
 plugins:
@@ -7,7 +9,7 @@ frameworkVersion: '3'
 
 provider:
   name: aws
-  runtime: nodejs14.x
+  runtime: nodejs18.x
   apiGateway:
     minimumCompressionSize: 1024
   stage: ${opt:stage, 'dev'}
@@ -31,7 +33,6 @@ functions:
         Resource:
           - '*'
 
-  # TODO: Configure this function
   GetTodos:
     handler: src/lambda/http/getTodos.handler
     events:
@@ -52,7 +53,6 @@ functions:
         Resource:
           - '*'
 
-  # TODO: Configure this function
   CreateTodo:
     handler: src/lambda/http/createTodo.handler
     events:
@@ -76,7 +76,6 @@ functions:
         Resource:
           - '*'
 
-  # TODO: Configure this function
   UpdateTodo:
     handler: src/lambda/http/updateTodo.handler
     events:
@@ -100,10 +99,7 @@ functions:
         Resource:
           - '*'
 
-  # TODO: Configure this function
   DeleteTodo:
-    handler: src/lambda/http/deleteTodo.handler
-    DeleteTodo:
     handler: src/lambda/http/deleteTodo.handler
     events:
       - http:
@@ -116,14 +112,13 @@ functions:
         Action:
           - dynamodb:DeleteItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
-      - Effect: "Allow"
+      - Effect: 'Allow'
         Action:
-          - "xray:PutTraceSegments"
-          - "xray:PutTelemetryRecords"
+          - 'xray:PutTraceSegments'
+          - 'xray:PutTelemetryRecords'
         Resource:
-          - "*"
+          - '*'
 
-  # TODO: Configure this function
   GenerateUploadUrl:
     handler: src/lambda/http/generateUploadUrl.handler
     events:
@@ -142,16 +137,15 @@ functions:
         Action:
           - dynamodb:UpdateItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
-      - Effect: "Allow"
+      - Effect: 'Allow'
         Action:
-          - "xray:PutTraceSegments"
-          - "xray:PutTelemetryRecords"
+          - 'xray:PutTraceSegments'
+          - 'xray:PutTelemetryRecords'
         Resource:
-          - "*"
+          - '*'
 
 resources:
   Resources:
-    # TODO: Add any necessary AWS resources
     GatewayResponseDefault4XX:
       Type: AWS::ApiGateway::GatewayResponse
       Properties:
@@ -196,8 +190,7 @@ resources:
         BucketName: ${self:provider.environment.IMAGES_S3_BUCKET}
         CorsConfiguration:
           CorsRules:
-            -
-              AllowedOrigins:
+            - AllowedOrigins:
                 - '*'
               AllowedHeaders:
                 - '*'
@@ -208,17 +201,3 @@ resources:
                 - DELETE
                 - HEAD
               MaxAge: 3000
-
-    BucketPolicy:
-      Type: AWS::S3::BucketPolicy
-      Properties:
-        PolicyDocument:
-          Id: UdacityServerlessTodo
-          Version: "2012-10-17"
-          Statement:
-            - Sid: PublicReadForGetBucketObjects
-              Effect: Allow
-              Principal: '*'
-              Action: 's3:GetObject'
-              Resource: 'arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}/*'
-        Bucket: !Ref AttachmentsBucket

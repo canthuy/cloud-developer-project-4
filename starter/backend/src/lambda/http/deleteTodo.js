@@ -1,8 +1,30 @@
+import { deleteTodo } from '../../businessLogic/todos'
+import { getToken } from '../../utils/getToken.mjs'
 
-export function handler(event) {
+export async function handler(event) {
   const todoId = event.pathParameters.todoId
+  const jwtToken = getToken(event)
 
-  // TODO: Remove a TODO item by id
-  return undefined
+  try {
+    await deleteTodo(jwtToken, todoId)
+    logger.info(`Successfully deleted todo item: ${todoId}`)
+    return {
+      statusCode: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+      },
+      body: undefined
+    }
+  } catch (error) {
+    logger.error(`Error: ${error.message}`)
+    return {
+      statusCode: 500,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+      },
+      body: JSON.stringify({ error })
+    }
+  }
 }
-

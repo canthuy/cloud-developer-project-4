@@ -47,7 +47,15 @@ async function verifyToken(authHeader) {
   const jwt = jsonwebtoken.decode(token, { complete: true })
 
   // TODO: Implement token verification
-  return undefined;
+  const client = JwksRsa({
+    jwksUri: 'https://dev-skho8kmk1c4a00ld.us.auth0.com/.well-known/jwks.json'
+  })
+  const kid = '12345abcde'
+  const certSigningKey = await client.getSigningKeyAsync(kid)
+
+  return jsonwebtoken.verify(token, certSigningKey.publicKey, {
+    algorithms: ['RS256']
+  })
 }
 
 function getToken(authHeader) {
