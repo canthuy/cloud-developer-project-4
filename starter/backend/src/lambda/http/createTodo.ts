@@ -1,7 +1,10 @@
 import { createTodo } from '../../businessLogic/todos'
-import { getToken } from '../../utils/getToken.mjs'
+import { getToken } from '../../utils/getToken'
+import { createLogger } from '../../utils/logger'
 
-export async function handler(event) {
+const logger = createLogger('createTodo')
+
+export async function handler(event: any) {
   const newTodo = JSON.parse(event.body)
   const jwtToken = getToken(event)
 
@@ -16,7 +19,7 @@ export async function handler(event) {
       },
       body: JSON.stringify({ newTodoItem })
     }
-  } catch (error) {
+  } catch (error: any) {
     logger.error(`Error: ${error.message}`)
     return {
       statusCode: 500,

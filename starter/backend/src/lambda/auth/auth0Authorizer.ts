@@ -1,12 +1,18 @@
 import Axios from 'axios'
 import jsonwebtoken from 'jsonwebtoken'
-import { createLogger } from '../../utils/logger.mjs'
+import { createLogger } from '../../utils/logger'
+import jwksRsa from 'jwks-rsa'
 
 const logger = createLogger('auth')
 
-const jwksUrl = 'https://test-endpoint.auth0.com/.well-known/jwks.json'
+const jwksUrl =
+  'https://dev-skho8kmk1c4a00ld.us.auth0.com/.well-known/jwks.json'
 
-export async function handler(event) {
+const client = jwksRsa({
+  jwksUri: jwksUrl
+})
+
+export async function handler(event: any) {
   try {
     const jwtToken = await verifyToken(event.authorizationToken)
 
@@ -23,7 +29,7 @@ export async function handler(event) {
         ]
       }
     }
-  } catch (e) {
+  } catch (e: any) {
     logger.error('User not authorized', { error: e.message })
 
     return {
@@ -42,23 +48,18 @@ export async function handler(event) {
   }
 }
 
-async function verifyToken(authHeader) {
+async function verifyToken(authHeader: any) {
   const token = getToken(authHeader)
   const jwt = jsonwebtoken.decode(token, { complete: true })
 
-  // TODO: Implement token verification
-  const client = JwksRsa({
-    jwksUri: 'https://dev-skho8kmk1c4a00ld.us.auth0.com/.well-known/jwks.json'
-  })
-  const kid = '12345abcde'
-  const certSigningKey = await client.getSigningKeyAsync(kid)
+  const certSigningKey: any = await client.getSigningKey(jwt?.header.kid)
 
-  return jsonwebtoken.verify(token, certSigningKey.publicKey, {
+  return jsonwebtoken.verify(token, certSigningKey?.publicKey, {
     algorithms: ['RS256']
   })
 }
 
-function getToken(authHeader) {
+function getToken(authHeader: any) {
   if (!authHeader) throw new Error('No authentication header')
 
   if (!authHeader.toLowerCase().startsWith('bearer '))

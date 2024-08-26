@@ -1,8 +1,6 @@
 import Axios from 'axios'
 
 export async function getTodos(idToken) {
-  console.log('Fetching todos')
-
   const response = await Axios.get(
     `${process.env.REACT_APP_API_ENDPOINT}/todos`,
     {
@@ -13,7 +11,7 @@ export async function getTodos(idToken) {
     }
   )
   console.log('Todos:', response.data)
-  return response.data.items
+  return response.data.todoList
 }
 
 export async function createTodo(idToken, newTodo) {

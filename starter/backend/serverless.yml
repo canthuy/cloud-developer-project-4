@@ -3,7 +3,17 @@ app: serverless-todo-app
 service: serverless-todo-app
 
 plugins:
+  - serverless-webpack
+  - serverless-reqvalidator-plugin
+  - serverless-aws-documentation
   - serverless-iam-roles-per-function
+  - serverless-plugin-canary-deployments
+  - serverless-dynamodb-local
+  - serverless-offline
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.cjs
 
 frameworkVersion: '3'
 
@@ -143,6 +153,13 @@ functions:
           - 'xray:PutTelemetryRecords'
         Resource:
           - '*'
+package:
+  include:
+    - src/businessLogic/**
+    - src/lambda/**
+  exclude:
+    - node_modules/**
+    - test/**
 
 resources:
   Resources:

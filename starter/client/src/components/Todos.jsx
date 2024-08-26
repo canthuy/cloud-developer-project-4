@@ -131,7 +131,6 @@ export function Todos() {
           audience: `https://dev-skho8kmk1c4a00ld.us.auth0.com/api/v2/`,
           scope: 'read:todos'
         })
-        console.log('Access token: ' + accessToken)
         const todos = await getTodos(accessToken)
         setTodos(todos)
         setLoadingTodos(false)

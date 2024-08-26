@@ -1,19 +1,25 @@
-export async function handler(event) {
+import { deleteTodo } from '../../businessLogic/todos'
+import { getToken } from '../../utils/getToken'
+import { createLogger } from '../../utils/logger'
+
+const logger = createLogger('deleteTodo')
+
+export async function handler(event: any) {
   const todoId = event.pathParameters.todoId
   const jwtToken = getToken(event)
 
   try {
-    const signedUrl = await generateUploadUrl(jwtToken, todoId)
-    logger.info('Successfully created signed url.')
+    await deleteTodo(jwtToken, todoId)
+    logger.info(`Successfully deleted todo item: ${todoId}`)
     return {
-      statusCode: 201,
+      statusCode: 204,
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': true
       },
-      body: JSON.stringify({ uploadUrl: signedUrl })
+      body: undefined
     }
-  } catch (error) {
+  } catch (error: any) {
     logger.error(`Error: ${error.message}`)
     return {
       statusCode: 500,
