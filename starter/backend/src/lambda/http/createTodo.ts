@@ -9,6 +9,10 @@ export async function handler(event: any) {
   const jwtToken = getToken(event)
 
   try {
+    if (newTodo.name.length < 1 || newTodo.name.length > 20) {
+      throw new Error('name is requried')
+    }
+
     const newTodoItem = await createTodo(jwtToken, newTodo)
     logger.info('Successfully created a new todo item.')
     return {
